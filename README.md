@@ -59,8 +59,8 @@ columns).
     seq 100 | awk '{print $i, $i*2, $i*3}' | pypeplot --columns 0 2
 
 It is also possible to 'chain' several `pypeplot` if more plots are 
-desired. To do so, use --tee options that directs one `pypeplot`instance
-of to pipe data to next instance
+desired. To do so, use --tee options that directs one `pypeplot` instance
+to pipe data to the next instance
 
     seq 100 | awk '{print $i, $i*2, $i*3}' | pypeplot --tee --columns 0 2 | pypeplot --columns 1
 
