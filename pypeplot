@@ -2,15 +2,23 @@
 
 # Alex Cornejo <acornejo@gmail.com> 2013
 # Source released under MIT license
+#
+# Forked by Stipe Galić (stipe.galic@gmail.com)
+#                       (sgalic@github)
+
 
 import sys
+
+if sys.version[0] == '2':
+    import Queue as Q
+else:
+    import queue as Q    
+
 import os
 import signal
 import argparse
-import Queue as Q
 from collections import deque
 from multiprocessing import Queue
-
 
 def print_error(err):
     sys.stderr.write("pypeplot error: " + err + "\n")
@@ -123,6 +131,12 @@ def readloop(q, line, args):
     while True:
         if args.tee:
             sys.stdout.write(line)
+            sys.stdout.flush()                      # to enable chaining of pypeplot
+        
+        if line.lstrip()[0] == args.comment:        #
+            line = oneline ()                       # allowing commented line to be ignored 
+            continue                                # by drawing engine
+            
         try:
             columns = line.strip().split(args.delimiter)
             nums = [float(columns[c]) for c in args.columns]
@@ -163,6 +177,9 @@ def create_parser():
     parser.add_argument('--delimiter', '-D', action='store', type=str,
                         default=' ',
                         help='string used as column delimiter (default: " ")')
+    parser.add_argument('--comment', '-C', action='store', type=str,    #
+                        default='#',                                    # comment arg
+                        help='symbol of comment line (default: "#")')   #
     parser.add_argument('--samples', '-S', action='store', type=int,
                         default=50,
                         help='number of sliding window samples (default: 50)')
