@@ -9,9 +9,10 @@ data, without necessarily exposing every `matplotlib` feature.
 
 `pyeplot` has no dependencies except for python and `matplotlib`.
 
-The recommended installation method is through `pip`. You can install
-the package globally as root, or install the package only for your user
-in `~/.local/bin` (which may require changing your path).
+It works with python 2.x or 3.x. The recommended installation method 
+is through `pip`. You can install the package globally as root, or 
+install the package only for your user in `~/.local/bin` (which may
+require changing your path).
 
     sudo pip install pypeplot
 
@@ -57,6 +58,12 @@ columns).
 
     seq 100 | awk '{print $i, $i*2, $i*3}' | pypeplot --columns 0 2
 
+It is also possible to 'chain' several `pypeplot` if more plots are 
+desired. To do so, use --tee options that directs one `pypeplot`instance
+of to pipe data to next instance
+
+    seq 100 | awk '{print $i, $i*2, $i*3}' | pypeplot --tee --columns 0 2 | pypeplot --columns 1
+
 The x-value of each dataset is assumed to be implicitly encoded by the
 line number in the input while the value of each column encodes the
 y-value of each dataset. Sometimes it is desirable to encode the x-value
@@ -78,6 +85,9 @@ example above we set the style of the three curves to 'blue circles',
 their meaning, see
 [here](http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot)
 
+If there is a need to ignore some of the input to the `pypeplot`, this should
+be indicated using `--comment` switch
+
 # Options
 
 Option                        | Description                            | Default
@@ -95,6 +105,7 @@ Option                        | Description                            | Default
 --style  STYLE [STYLE ...]    | Style to use for each plot             | auto
 --ymin YMIN                   | Minimum limit y-axis range             | auto
 --ymax YMAX                   | Maximum limit y-axis range             | auto
+--comment COMMENT             | Symbol designating comment line        | "#"
 
 # Examples
 
