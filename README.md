@@ -64,7 +64,7 @@ to pipe data to the next instance
 
     seq 100 | awk '{print $i, $i*2, $i*3}' | pypeplot --tee --columns 0 2 | pypeplot --columns 1
 
-This may be useful if the output are of different orders of magnitude of should
+This may be useful if the output are of different orders of magnitude or should
 be logically separated.
 
 The x-value of each dataset is assumed to be implicitly encoded by the
