@@ -3,16 +3,26 @@
 # Alex Cornejo <acornejo@gmail.com> 2013
 # Source released under MIT license
 #
-# Forked by Stipe Galić (stipe.galic@gmail.com)
+# Forked by Stipe Galic (stipe.galic@gmail.com)
 #                       (sgalic@github)
 
 
-import sys
+def print_error(err):
+    sys.stderr.write("pypeplot error: " + err + "\n")
 
-if sys.version[0] == '2':
-    import Queue as Q
-else:
-    import queue as Q    
+import sys
+try:
+    import matplotlib.pyplot as plt
+except:
+    print_error("matplotlib not found\n\
+    matplotlib is available from apt-get, yum, brew or pip.\n\
+    see http://matplotlib.org/faq/installing_faq.html\n")
+    sys.exit(1)
+
+if sys.version[0] == '2':       #
+    import Queue as Q           # Just to make sure it loads properly with python3
+else:                           #
+    import queue as Q           #
 
 import os
 import signal
@@ -20,8 +30,6 @@ import argparse
 from collections import deque
 from multiprocessing import Queue
 
-def print_error(err):
-    sys.stderr.write("pypeplot error: " + err + "\n")
 
 
 def print_info(msg):
@@ -47,17 +55,9 @@ def getdata(q):
 
 
 def plotloop(q, args):
-    try:
-        import matplotlib.pyplot as plt
-    except:
-        print_error("matplotlib not found\n\
-        matplotlib is available from apt-get, yum, brew or pip.\n\
-        see http://matplotlib.org/faq/installing_faq.html\n")
-        sys.exit(1)
-
+   
     data = getdata(q)
     if data is None:
-        print_error("no data received!")
         return 1
 
     fig = plt.figure()
@@ -130,15 +130,16 @@ def readloop(q, line, args):
     cur_x = 0
     while True:
         if args.tee:
-            sys.stdout.write(line)
+            sys.stdout.write(str(line))
             sys.stdout.flush()                      # to enable chaining of pypeplot
-        
-        if line.lstrip()[0] == args.comment:        #
+
+        if len (line.lstrip()) != 0 and line.lstrip()[0] == args.comment:        #
             line = oneline ()                       # allowing commented line to be ignored 
             continue                                # by drawing engine
             
         try:
-            columns = line.strip().split(args.delimiter)
+            columns =  [s for s in line.strip().split(args.delimiter) if s]
+            sys.stdout.flush()                      # to enable chaining of pypeplot
             nums = [float(columns[c]) for c in args.columns]
             if args.xcolumn is not None:
                 nums.append(float(columns[args.xcolumn]))
@@ -260,7 +261,6 @@ def main(cmd_args=None):
 
     if not check_args(args, num_cols):
         return 1
-
     # Using os.fork instead of multiprocess.Process to allow plot to
     # continue to remain on background after parent process has exited.
     # This is possible with fork or using additional package
