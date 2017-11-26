@@ -58,11 +58,14 @@ columns).
 
     seq 100 | awk '{print $i, $i*2, $i*3}' | pypeplot --columns 0 2
 
-It is also possible to 'chain' several `pypeplot` if more plots are 
+It is also possible to 'chain' several `pypeplot` scripts if more plots are
 desired. To do so, use --tee options that directs one `pypeplot` instance
 to pipe data to the next instance
 
     seq 100 | awk '{print $i, $i*2, $i*3}' | pypeplot --tee --columns 0 2 | pypeplot --columns 1
+
+This may be useful if the output are of different orders of magnitude of should
+be logically separated.
 
 The x-value of each dataset is assumed to be implicitly encoded by the
 line number in the input while the value of each column encodes the
